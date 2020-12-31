@@ -1,7 +1,7 @@
 use std::io;
 use std::io::{BufRead};
 
-fn get_optimal_value(mut s: i32, items: &Vec<Item>) -> String {
+fn get_optimal_value(mut s: f32, items: &Vec<Item>) -> String {
     let mut v: f32 = 0.0;
     let mut u = items
         .iter()
@@ -13,14 +13,13 @@ fn get_optimal_value(mut s: i32, items: &Vec<Item>) -> String {
 
     for it in u.into_iter() {
         if s >= items[it.0].weight {
-            v += items[it.0].value as f32;
+            v += items[it.0].value;
             s -= items[it.0].weight;
-            if s == 0 { break; }
+            if s == 0.0 { break; }
         } else {
-            v += it.1 * s as f32;
+            v += it.1 * s;
             break;
         }
-        println!("{:?} {:?}", items[it.0].value, items[it.0].weight);
     };
 
     format!("{:.4}", v)
@@ -28,13 +27,13 @@ fn get_optimal_value(mut s: i32, items: &Vec<Item>) -> String {
 
 #[derive(Debug, Default, Copy, Clone)]
 struct Item {
-    weight: i32,
-    value: i32,
+    weight: f32,
+    value: f32,
 }
 
 impl Item {
     fn utility(&self) -> f32 {
-        self.value as f32 / self.weight as f32
+        self.value / self.weight
     }
 }
 
@@ -45,8 +44,8 @@ mod tests {
 
     #[test]
     fn test_get_optimal_value() {
-        assert_eq!(get_optimal_value(50, &vec![Item{ weight: 20, value: 60 }, Item{ weight: 50, value: 100 }, Item{ weight: 30, value: 120 }]), "180.0000".to_owned());
-        assert_eq!(get_optimal_value(10, &vec![Item{ weight: 30, value: 500 }]), "166.6667".to_owned());
+        assert_eq!(get_optimal_value(50.0, &vec![Item{ weight: 20.0, value: 60.0 }, Item{ weight: 50.0, value: 100.0 }, Item{ weight: 30.0, value: 120.0 }]), "180.0000".to_owned());
+        assert_eq!(get_optimal_value(10.0, &vec![Item{ weight: 30.0, value: 500.0 }]), "166.6667".to_owned());
     }
 }
 
@@ -54,7 +53,7 @@ fn main() {
     let reader = io::stdin();
     let mut handle = reader.lock();
     let mut num = 2;
-    let mut w = 0;
+    let mut w = 0.0;
     let mut items = Vec::new();
 
     loop {
@@ -69,7 +68,7 @@ fn main() {
             Some(i) => num = i,
             None => println!("input is not an integer")
         }
-        let w_opt: Option<i32> = split[1].parse::<i32>().ok();
+        let w_opt: Option<f32> = split[1].parse::<f32>().ok();
         match w_opt {
             Some(i) => w = i,
             None => println!("input is not an integer")
@@ -85,12 +84,12 @@ fn main() {
             }
             let mut item = Item::default();
             let split = buffer.trim().split(" ").collect::<Vec<&str>>();
-            let val_opt: Option<i32> = split[0].parse::<i32>().ok();
+            let val_opt: Option<f32> = split[0].parse::<f32>().ok();
             match val_opt {
                 Some(i) => item.value = i,
                 None => println!("input is not an integer")
             }
-            let weight_opt: Option<i32> = split[1].parse::<i32>().ok();
+            let weight_opt: Option<f32> = split[1].parse::<f32>().ok();
             match weight_opt {
                 Some(i) => item.weight = i,
                 None => println!("input is not an integer")
