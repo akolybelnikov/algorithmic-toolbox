@@ -116,5 +116,5 @@ fn main() {
         break;
     }
 
-    println!("{}", compute_min_refills(d, m, &stops))
+    println!("{}", compute_min_refills(d, m, &stops));
 }
